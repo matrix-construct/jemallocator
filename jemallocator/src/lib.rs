@@ -18,17 +18,27 @@
 #![cfg_attr(feature = "api", feature(allocator_api))]
 #![no_std]
 
-use core::{alloc::Layout, cmp, hint::assert_unchecked};
+mod allocator;
+pub mod ctl;
+mod global_alloc;
 
-use libc::c_void;
+#[cfg(not(feature = "use_std"))]
+use core as std;
+
+#[cfg(feature = "use_std")]
+pub(crate) use ::std;
 
 /// Raw bindings to jemalloc
 pub(crate) mod ffi {
     pub use tikv_jemalloc_sys::*;
 }
 
-mod allocator;
-mod global_alloc;
+use core::{alloc::Layout, cmp, hint::assert_unchecked};
+
+use libc::c_void;
+
+pub use self::global_alloc::hook;
+pub(crate) use crate::std::{fmt, num, result};
 
 /// Handle to the jemalloc allocator
 ///
@@ -38,18 +48,6 @@ mod global_alloc;
 /// trait, allowing usage in collections.
 #[derive(Debug)]
 pub struct Jemalloc;
-
-/// When `feature = global_hooks` enabled, called prior to entering jemalloc.
-pub static mut HOOK_GLOBAL_ALLOC: Option<fn(Layout)> = None;
-
-/// When `feature = global_hooks` enabled, called prior to entering jemalloc.
-pub static mut HOOK_GLOBAL_ALLOC_ZEROED: Option<fn(Layout)> = None;
-
-/// When `feature = global_hooks` enabled, called prior to entering jemalloc.
-pub static mut HOOK_GLOBAL_REALLOC: Option<fn(Layout, *const u8, usize)> = None;
-
-/// When `feature = global_hooks` enabled, called prior to entering jemalloc.
-pub static mut HOOK_GLOBAL_DEALLOC: Option<fn(Layout, *const u8)> = None;
 
 /// This constant equals _Alignof(max_align_t) and is platform-specific. It
 /// contains the _maximum_ alignment that the memory allocations returned by the

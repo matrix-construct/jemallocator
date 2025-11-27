@@ -5,16 +5,16 @@ macro_rules! types {
      docs: $(#[$doc:meta])*
      mib_docs: $(#[$doc_mib:meta])*
     ) => {
-        paste::paste! {
+        ::paste::paste! {
             $(#[$doc])*
             #[allow(non_camel_case_types)]
             pub struct $id;
 
             impl $id {
-                const NAME: &'static crate::keys::Name = {
+                const NAME: &'static crate::ctl::keys::Name = {
                     union U<'a> {
                         bytes: &'a [u8],
-                        name: &'a crate::keys::Name
+                        name: &'a crate::ctl::keys::Name
                     }
 
                     unsafe { U { bytes: $byte_string }.name }
@@ -22,12 +22,12 @@ macro_rules! types {
                 /// Returns Management Information Base (MIB)
                 ///
                 /// This value can be used to access the key without doing string lookup.
-                pub fn mib() -> crate::error::Result<[<$id _mib>]> {
+                pub fn mib() -> crate::ctl::error::Result<[<$id _mib>]> {
                     Ok([<$id _mib>](Self::NAME.$name_to_mib()?))
                 }
 
-                /// Key [`crate::keys::Name`].
-                pub fn name() -> &'static crate::keys::Name {
+                /// Key [`crate::ctl::keys::Name`].
+                pub fn name() -> &'static crate::ctl::keys::Name {
                     Self::NAME
                 }
             }
@@ -36,7 +36,7 @@ macro_rules! types {
             #[repr(transparent)]
             #[derive(Copy, Clone)]
             #[allow(non_camel_case_types)]
-            pub struct [<$id _mib>](pub crate::keys::$mib);
+            pub struct [<$id _mib>](pub crate::ctl::keys::$mib);
         }
     };
 }
@@ -44,19 +44,19 @@ macro_rules! types {
 /// Read
 macro_rules! r {
     ($id:ident => $ret_ty:ty) => {
-        paste::paste! {
+        ::paste::paste! {
             impl $id {
                 /// Reads value using string API.
-                pub fn read() -> crate::error::Result<$ret_ty> {
-                    use crate::keys::Access;
+                pub fn read() -> crate::ctl::error::Result<$ret_ty> {
+                    use crate::ctl::keys::Access;
                     Self::NAME.read()
                 }
             }
 
             impl [<$id _mib>] {
                 /// Reads value using MIB API.
-                pub fn read(self) -> crate::error::Result<$ret_ty> {
-                    use crate::keys::Access;
+                pub fn read(self) -> crate::ctl::error::Result<$ret_ty> {
+                    use crate::ctl::keys::Access;
                     self.0.read()
                 }
             }
@@ -93,19 +93,19 @@ macro_rules! r {
 /// Write
 macro_rules! w {
     ($id:ident => $ret_ty:ty) => {
-        paste::paste! {
+        ::paste::paste! {
             impl $id {
                 /// Writes `value` using string API.
-                pub fn write(value: $ret_ty) -> crate::error::Result<()> {
-                    use crate::keys::Access;
+                pub fn write(value: $ret_ty) -> crate::ctl::error::Result<()> {
+                    use crate::ctl::keys::Access;
                     Self::NAME.write(value)
                 }
             }
 
             impl [<$id _mib>] {
                 /// Writes `value` using MIB API.
-                pub fn write(self, value: $ret_ty) -> crate::error::Result<()> {
-                    use crate::keys::Access;
+                pub fn write(self, value: $ret_ty) -> crate::ctl::error::Result<()> {
+                    use crate::ctl::keys::Access;
                     self.0.write(value)
                 }
             }
@@ -142,19 +142,19 @@ macro_rules! w {
 /// Update
 macro_rules! u {
     ($id:ident  => $ret_ty:ty) => {
-        paste::paste! {
+        ::paste::paste! {
             impl $id {
                 /// Updates key to `value` returning its old value using string API.
-                pub fn update(value: $ret_ty) -> crate::error::Result<$ret_ty> {
-                    use crate::keys::Access;
+                pub fn update(value: $ret_ty) -> crate::ctl::error::Result<$ret_ty> {
+                    use crate::ctl::keys::Access;
                     Self::NAME.update(value)
                 }
             }
 
             impl [<$id _mib>] {
                 /// Updates key to `value` returning its old value using MIB API.
-                pub fn update(self, value: $ret_ty) -> crate::error::Result<$ret_ty> {
-                    use crate::keys::Access;
+                pub fn update(self, value: $ret_ty) -> crate::ctl::error::Result<$ret_ty> {
+                    use crate::ctl::keys::Access;
                     self.0.update(value)
                 }
             }

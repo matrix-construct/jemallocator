@@ -8,25 +8,20 @@ authors = [
     "Simon Sapin <simon.sapin@exyr.org>",
     "Steven Fackler <sfackler@gmail.com>",
     "The TiKV Project Developers",
+    "Jason Volk <jason@zemos.net>",
+    "June August <june@girlboss.ceo>",
 ]
 license = "MIT/Apache-2.0"
 readme = "README.md"
 keywords = ["allocator", "jemalloc"]
 categories = ["memory-management", "api-bindings"]
-repository = "https://github.com/tikv/jemallocator"
-homepage = "https://github.com/tikv/jemallocator"
-documentation = "https://docs.rs/jemallocator"
+repository = "https://github.com/matrix-construct/jemallocator"
+homepage = "https://github.com/matrix-construct/jemallocator"
+documentation = "https://matrix-construct.github.io/jemallocator"
 description = """
 A Rust allocator backed by jemalloc
 """
 edition = "2018"
-
-[badges]
-travis-ci = { repository = "tikv/jemallocator" }
-codecov = { repository = "tikv/jemallocator" }
-is-it-maintained-issue-resolution = { repository = "tikv/jemallocator" }
-is-it-maintained-open-issues = { repository = "tikv/jemallocator" }
-maintenance = { status = "actively-developed" }
 
 [lib]
 test = false
@@ -38,11 +33,8 @@ required-features = ["stats"]
 
 [dependencies]
 tikv-jemalloc-sys = { path = "../jemalloc-sys", version = "0.6.0", default-features = false }
-libc = { version = "^0.2.8", default-features = false }
-
-[dev-dependencies]
+libc = { version = "^0.2", default-features = false }
 paste = "1"
-tikv-jemalloc-ctl = { path = "../jemalloc-ctl", version = "0.6.0" }
 
 [features]
 default = ["background_threads_runtime_support"]

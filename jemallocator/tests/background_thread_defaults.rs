@@ -7,7 +7,7 @@ static A: Jemalloc = Jemalloc;
 
 // Returns true if background threads are enabled.
 fn background_threads() -> bool {
-    tikv_jemalloc_ctl::opt::background_thread::read().unwrap()
+    tikv_jemallocator::ctl::opt::background_thread::read().unwrap()
 }
 
 #[test]

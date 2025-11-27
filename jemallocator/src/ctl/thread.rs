@@ -1,7 +1,9 @@
 //! Thread specific operations.
 
-use crate::error::Result;
-use crate::raw::{read, read_mib};
+use crate::ctl::{
+    error::Result,
+    raw::{read, read_mib},
+};
 
 option! {
     allocatedp[ str: b"thread.allocatedp\0", non_str: 2 ] => *mut u64 |
@@ -9,7 +11,7 @@ option! {
     docs:
     /// Access to the total number of bytes allocated by the current thread.
     ///
-    /// Unlike [`crate::stats::allocated`], the value returned by this type is not the
+    /// Unlike [`crate::ctl::stats::allocated`], the value returned by this type is not the
     /// number of bytes *currently* allocated, but rather the number of bytes
     /// that have *ever* been allocated by this thread.
     ///

@@ -1,10 +1,13 @@
 //! Bulk statistics output.
 
+use std::{
+    any::Any,
+    ffi::CStr,
+    io::{self, Write},
+    panic::{self, AssertUnwindSafe},
+};
+
 use libc::{c_char, c_void};
-use std::any::Any;
-use std::ffi::CStr;
-use std::io::{self, Write};
-use std::panic::{self, AssertUnwindSafe};
 
 /// Statistics configuration.
 ///
@@ -65,9 +68,7 @@ where
         }
 
         let buf = CStr::from_ptr(buf);
-        match panic::catch_unwind(AssertUnwindSafe(|| {
-            state.writer.write_all(buf.to_bytes())
-        })) {
+        match panic::catch_unwind(AssertUnwindSafe(|| state.writer.write_all(buf.to_bytes()))) {
             Ok(Ok(_)) => {}
             Ok(Err(e)) => state.error = Err(e),
             Err(e) => state.panic = Err(e),

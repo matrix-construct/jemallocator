@@ -1,7 +1,8 @@
 //! Error type
 
-use crate::{fmt, num, result};
 use libc::c_int;
+
+use crate::{fmt, num, result};
 
 pub trait NonZeroT {
     type T;
@@ -69,9 +70,7 @@ fn description(code: c_int) -> Option<&'static str> {
              small; in this case as much data as possible are read \
              despite the error.",
         ),
-        libc::ENOENT => {
-            Some("`name` or `mib` specifies an unknown/invalid value.")
-        }
+        libc::ENOENT => Some("`name` or `mib` specifies an unknown/invalid value."),
         libc::EPERM => Some(
             "Attempt to read or write `void` value, or attempt to \
              write read-only value.",
@@ -98,7 +97,7 @@ mod tests {
 
     #[test]
     fn size_of_result_error() {
-        use crate::mem::size_of;
+        use crate::ctl::mem::size_of;
         assert_eq!(size_of::<Result<()>>(), size_of::<Error>());
         assert_eq!(size_of::<Error>(), size_of::<libc::c_int>());
     }

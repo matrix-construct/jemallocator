@@ -69,22 +69,6 @@ fn main() {
 ```
 "##
 )]
-// TODO: rename the following lint on next minor bump
-#![allow(renamed_and_removed_lints)]
-#![deny(missing_docs, broken_intra_doc_links)]
-#![cfg_attr(not(feature = "use_std"), no_std)]
-
-#[cfg(test)]
-#[global_allocator]
-static ALLOC: tikv_jemallocator::Jemalloc = tikv_jemallocator::Jemalloc;
-
-use crate::std::{fmt, mem, num, ops, ptr, result, slice, str};
-
-#[cfg(not(feature = "use_std"))]
-use core as std;
-
-#[cfg(feature = "use_std")]
-pub(crate) use ::std;
 
 #[macro_use]
 mod macros;
@@ -105,6 +89,12 @@ pub mod thread;
 
 pub use error::{Error, Result};
 pub use keys::{Access, AsName, Mib, MibStr, Name};
+
+use crate::std::{fmt, mem, ops, ptr, slice, str};
+
+#[cfg(test)]
+#[global_allocator]
+static ALLOC: crate::Jemalloc = crate::Jemalloc;
 
 option! {
     version[ str: b"version\0", str: 1 ] => &'static str |
@@ -220,14 +210,14 @@ option! {
 
 impl epoch {
     /// Advances the epoch returning its old value - see [`epoch`].
-    pub fn advance() -> crate::error::Result<u64> {
+    pub fn advance() -> crate::ctl::error::Result<u64> {
         Self::update(1)
     }
 }
 
 impl epoch_mib {
     /// Advances the epoch returning its old value - see [`epoch`].
-    pub fn advance(self) -> crate::error::Result<u64> {
+    pub fn advance(self) -> crate::ctl::error::Result<u64> {
         self.0.update(1)
     }
 }

@@ -1,8 +1,11 @@
 //! Raw `unsafe` access to the `malloctl` API.
 
-use crate::error::{cvt, Result};
-use crate::{mem, ptr, slice};
 use libc::c_char;
+
+use crate::ctl::{
+    error::{cvt, Result},
+    mem, ptr, slice,
+};
 
 /// Translates `name` to a `mib` (Management Information Base)
 ///
@@ -176,10 +179,7 @@ pub unsafe fn write<T>(name: &[u8], mut value: T) -> Result<()> {
 /// invalid `T`, for example, by passing `T=u8` for a key expecting `bool`. The
 /// sizes of `bool` and `u8` match, but `bool` cannot represent all values that
 /// `u8` can.
-pub unsafe fn update_mib<T: Copy>(
-    mib: &[usize],
-    mut in_value: T,
-) -> Result<T> {
+pub unsafe fn update_mib<T: Copy>(mib: &[usize], mut in_value: T) -> Result<T> {
     let in_len = mem::size_of::<T>();
     let in_value_ptr = if in_len > 0 {
         &mut in_value as *mut _ as *mut _
@@ -330,10 +330,7 @@ pub fn write_str_mib(mib: &[usize], value: &'static [u8]) -> Result<()> {
 /// If the pointer is valid but it does not point to a null-terminated string,
 /// looking for `\0` will read garbage and might end up reading out-of-bounds,
 /// which is undefined behavior.
-pub unsafe fn update_str_mib(
-    mib: &[usize],
-    value: &'static [u8],
-) -> Result<&'static [u8]> {
+pub unsafe fn update_str_mib(mib: &[usize], value: &'static [u8]) -> Result<&'static [u8]> {
     let ptr: *const c_char = update_mib(mib, value.as_ptr() as *const c_char)?;
     Ok(ptr2str(ptr))
 }
@@ -400,10 +397,7 @@ pub fn write_str(name: &[u8], value: &'static [u8]) -> Result<()> {
 /// If the pointer is valid but it does not point to a null-terminated string,
 /// looking for `\0` will read garbage and might end up reading out-of-bounds,
 /// which is undefined behavior.
-pub unsafe fn update_str(
-    name: &[u8],
-    value: &'static [u8],
-) -> Result<&'static [u8]> {
+pub unsafe fn update_str(name: &[u8], value: &'static [u8]) -> Result<&'static [u8]> {
     let ptr: *const c_char = update(name, value.as_ptr() as *const c_char)?;
     Ok(ptr2str(ptr))
 }

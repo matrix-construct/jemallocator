@@ -27,9 +27,7 @@
 
 #![allow(clippy::uninlined_format_args)]
 
-use crate::error::Result;
-use crate::std::str;
-use crate::{fmt, ops, raw};
+use crate::ctl::{error::Result, fmt, ops, raw};
 
 /// A `Name` in the _MALLCTL NAMESPACE_.
 #[repr(transparent)]
@@ -107,9 +105,7 @@ impl Name {
             | b"thread.prof.name"
             | b"prof.dump" => true,
             v if v.starts_with(b"arena.") && v.ends_with(b".dss") => true,
-            v if v.starts_with(b"stats.arenas.") && v.ends_with(b".dss") => {
-                true
-            }
+            v if v.starts_with(b"stats.arenas.") && v.ends_with(b".dss") => true,
             _ => false,
         }
     }
@@ -318,8 +314,7 @@ impl<T: MibArg> Access<&'static str> for MibStr<T> {
     fn update(&self, value: &'static str) -> Result<&'static str> {
         // this is safe because the only safe way to construct a `MibStr` is by
         // validating that the key refers to a byte-string value
-        let s =
-            unsafe { raw::update_str_mib(self.0.as_ref(), value.as_bytes())? };
+        let s = unsafe { raw::update_str_mib(self.0.as_ref(), value.as_bytes())? };
         Ok(str::from_utf8(s).unwrap())
     }
 }
@@ -356,23 +351,11 @@ impl Access<&'static str> for Name {
 }
 
 pub trait MibArg:
-    Copy
-    + Clone
-    + PartialEq
-    + Default
-    + fmt::Debug
-    + AsRef<[usize]>
-    + AsMut<[usize]>
+    Copy + Clone + PartialEq + Default + fmt::Debug + AsRef<[usize]> + AsMut<[usize]>
 {
 }
 impl<T> MibArg for T where
-    T: Copy
-        + Clone
-        + PartialEq
-        + Default
-        + fmt::Debug
-        + AsRef<[usize]>
-        + AsMut<[usize]>
+    T: Copy + Clone + PartialEq + Default + fmt::Debug + AsRef<[usize]> + AsMut<[usize]>
 {
 }
 
