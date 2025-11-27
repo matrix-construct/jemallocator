@@ -75,5 +75,5 @@ cargo test --target "${TARGET}" \
 # if [ "${TRAVIS_RUST_VERSION}" = "nightly"  ]
 # then
 #     # The Alloc trait is unstable:
-#     ${CARGO_CMD} test --target "${TARGET}" --features alloc_trait
+#     ${CARGO_CMD} test --target "${TARGET}" --features api
 # fi

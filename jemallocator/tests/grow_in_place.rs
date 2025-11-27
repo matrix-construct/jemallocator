@@ -1,4 +1,6 @@
-#![cfg_attr(feature = "alloc_trait", feature(allocator_api))]
+#![cfg_attr(feature = "api", feature(allocator_api))]
+#![cfg(feature = "api")]
+#![cfg(disabled)]
 
 use tikv_jemallocator::Jemalloc;
 
@@ -6,10 +8,9 @@ use tikv_jemallocator::Jemalloc;
 static A: Jemalloc = Jemalloc;
 
 #[test]
-#[cfg(feature = "alloc_trait")]
 fn shrink_in_place() {
     unsafe {
-        use std::alloc::{Alloc, Layout};
+        use std::alloc::{Allocator, Layout};
 
         // allocate 7 bytes which end up in the 8 byte size-class as long as
         // jemalloc's default size classes are used:

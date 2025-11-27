@@ -1,37 +1,17 @@
 //! Benchmarks the cost of the different allocation functions by doing a
 //! roundtrip (allocate, deallocate).
-#![feature(test, allocator_api)]
-#![cfg(feature = "alloc_trait")]
 
+#![cfg(bench)]
 extern crate test;
 
-use jemallocator::Jemalloc;
 use libc::c_int;
-use std::{
-    alloc::{Alloc, Excess, Layout},
-    ptr,
-};
+use tikv_jemallocator::Jemalloc;
+
 use test::Bencher;
 use tikv_jemalloc_sys::MALLOCX_ALIGN;
 
 #[global_allocator]
 static A: Jemalloc = Jemalloc;
-
-// FIXME: replace with jemallocator::layout_to_flags
-#[cfg(any(target_arch = "arm", target_arch = "mips", target_arch = "powerpc"))]
-const MIN_ALIGN: usize = 8;
-#[cfg(any(
-    target_arch = "x86",
-    target_arch = "x86_64",
-    target_arch = "aarch64",
-    target_arch = "powerpc64",
-    target_arch = "loongarch64",
-    target_arch = "mips64",
-    target_arch = "riscv64",
-    target_arch = "s390x",
-    target_arch = "sparc64"
-))]
-const MIN_ALIGN: usize = 16;
 
 fn layout_to_flags(layout: &Layout) -> c_int {
     if layout.align() <= MIN_ALIGN && layout.align() <= layout.size() {

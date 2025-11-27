@@ -7,5 +7,8 @@ fn malloc_is_prefixed() {
 #[cfg(not(prefixed))]
 #[test]
 fn malloc_is_overridden() {
-    assert_eq!(tikv_jemalloc_sys::malloc as usize, libc::malloc as usize)
+    assert_eq!(
+        tikv_jemalloc_sys::malloc as *const () as usize,
+        libc::malloc as *const () as usize
+    )
 }

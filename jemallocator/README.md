@@ -71,7 +71,8 @@ other targets are only tested on Rust nightly.
 
 This crate provides following cargo feature flags:
 
-* `alloc_trait` When the `alloc_trait` feature of this crate is enabled, it also implements the `Alloc` trait, allowing usage in collections.
+* `api` When the `api` feature of this crate is enabled, it also implements the `Alloc`
+trait, allowing usage in collections.
 
 * `default` feature is `background_threads_runtime_support`.
 

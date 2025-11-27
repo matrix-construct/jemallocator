@@ -46,7 +46,7 @@ tikv-jemalloc-ctl = { path = "../jemalloc-ctl", version = "0.6.0" }
 
 [features]
 default = ["background_threads_runtime_support"]
-#alloc_trait = []
+api = [] #TODO: hasn't been updated since 2015
 profiling = ["tikv-jemalloc-sys/profiling"]
 debug = ["tikv-jemalloc-sys/debug"]
 stats = ["tikv-jemalloc-sys/stats"]
