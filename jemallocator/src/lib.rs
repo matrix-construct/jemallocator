@@ -36,8 +36,20 @@ mod global_alloc;
 ///
 /// When the `api` feature of this crate is enabled, it also implements the `Allocator`
 /// trait, allowing usage in collections.
-#[derive(Copy, Clone, Default, Debug)]
+#[derive(Debug)]
 pub struct Jemalloc;
+
+/// When `feature = global_hooks` enabled, called prior to entering jemalloc.
+pub static mut HOOK_GLOBAL_ALLOC: Option<fn(Layout)> = None;
+
+/// When `feature = global_hooks` enabled, called prior to entering jemalloc.
+pub static mut HOOK_GLOBAL_ALLOC_ZEROED: Option<fn(Layout)> = None;
+
+/// When `feature = global_hooks` enabled, called prior to entering jemalloc.
+pub static mut HOOK_GLOBAL_REALLOC: Option<fn(Layout, *const u8, usize)> = None;
+
+/// When `feature = global_hooks` enabled, called prior to entering jemalloc.
+pub static mut HOOK_GLOBAL_DEALLOC: Option<fn(Layout, *const u8)> = None;
 
 /// This constant equals _Alignof(max_align_t) and is platform-specific. It
 /// contains the _maximum_ alignment that the memory allocations returned by the

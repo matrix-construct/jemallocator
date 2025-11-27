@@ -22,8 +22,12 @@ use crate::{
 };
 
 unsafe impl GlobalAlloc for Jemalloc {
-    #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        #[cfg(feature = "global_hooks")]
+        if let Some(hook) = super::HOOK_GLOBAL_ALLOC {
+            hook(layout);
+        }
+
         let layout = adjust_layout(layout);
         let flags = MALLOCX_ALIGN(layout.align());
         debug_assert!(
@@ -45,8 +49,12 @@ unsafe impl GlobalAlloc for Jemalloc {
         ptr as *mut u8
     }
 
-    #[inline]
     unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+        #[cfg(feature = "global_hooks")]
+        if let Some(hook) = super::HOOK_GLOBAL_ALLOC_ZEROED {
+            hook(layout);
+        }
+
         let layout = adjust_layout(layout);
         let flags = MALLOCX_ALIGN(layout.align()) | MALLOCX_ZERO;
         debug_assert!(
@@ -68,8 +76,12 @@ unsafe impl GlobalAlloc for Jemalloc {
         ptr as *mut u8
     }
 
-    #[inline]
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
+        #[cfg(feature = "global_hooks")]
+        if let Some(hook) = super::HOOK_GLOBAL_REALLOC {
+            hook(layout, ptr, new_size);
+        }
+
         let layout = Layout::from_size_align_unchecked(new_size, layout.align());
         let layout = adjust_layout(layout);
         let flags = MALLOCX_ALIGN(layout.align());
@@ -92,8 +104,12 @@ unsafe impl GlobalAlloc for Jemalloc {
         ptr as *mut u8
     }
 
-    #[inline]
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        #[cfg(feature = "global_hooks")]
+        if let Some(hook) = super::HOOK_GLOBAL_DEALLOC {
+            hook(layout, ptr);
+        }
+
         assert_unchecked(!ptr.is_null());
         let ptr = ptr as *mut c_void;
         let layout = adjust_layout(layout);
