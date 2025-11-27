@@ -5,10 +5,9 @@
 extern crate test;
 
 use libc::c_int;
-use tikv_jemallocator::Jemalloc;
-
 use test::Bencher;
 use tikv_jemalloc_sys::MALLOCX_ALIGN;
+use tikv_jemallocator::Jemalloc;
 
 #[global_allocator]
 static A: Jemalloc = Jemalloc;

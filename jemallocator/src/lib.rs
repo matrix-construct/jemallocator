@@ -18,9 +18,6 @@
 #![cfg_attr(feature = "api", feature(allocator_api))]
 #![no_std]
 
-mod allocator;
-mod global_alloc;
-
 use core::{alloc::Layout, cmp, hint::assert_unchecked};
 
 use libc::c_void;
@@ -29,6 +26,9 @@ use libc::c_void;
 pub(crate) mod ffi {
     pub use tikv_jemalloc_sys::*;
 }
+
+mod allocator;
+mod global_alloc;
 
 /// Handle to the jemalloc allocator
 ///

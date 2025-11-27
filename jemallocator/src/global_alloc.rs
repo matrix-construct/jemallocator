@@ -13,11 +13,13 @@ use core::{
     hint::assert_unchecked,
 };
 
-use crate::adjust_layout;
-use crate::ffi;
-use crate::ffi::{MALLOCX_ALIGN, MALLOCX_ZERO};
-use crate::Jemalloc;
 use libc::{c_void, uintptr_t};
+
+use crate::{
+    adjust_layout, ffi,
+    ffi::{MALLOCX_ALIGN, MALLOCX_ZERO},
+    Jemalloc,
+};
 
 unsafe impl GlobalAlloc for Jemalloc {
     #[inline]

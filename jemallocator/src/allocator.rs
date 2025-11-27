@@ -11,18 +11,20 @@
 #![cfg(feature = "api")]
 #![cfg(disabled)]
 
-use crate::ffi;
-use crate::Jemalloc;
-use core::alloc::{Alloc, AllocErr, CannotReallocInPlace, Excess};
-use core::ptr::NonNull;
 use core::{
-    alloc::{GlobalAlloc, Layout},
+    alloc::{Alloc, AllocErr, CannotReallocInPlace, Excess, GlobalAlloc, Layout},
     cmp,
     hint::assert_unchecked,
+    ptr::NonNull,
 };
 
-use crate::ffi::{MALLOCX_ALIGN, MALLOCX_ZERO};
 use libc::{c_void, uintptr_t};
+
+use crate::{
+    ffi,
+    ffi::{MALLOCX_ALIGN, MALLOCX_ZERO},
+    Jemalloc,
+};
 
 unsafe impl Alloc for Jemalloc {
     #[inline]
